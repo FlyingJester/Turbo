@@ -1,0 +1,12 @@
+
+
+Import("environment")
+
+libultrasphere = environment.SharedLibrary("ultrasphere", ["plugin.cpp", "script.cpp", "plugloader.cpp"], LIBS=["mozjs-"])
+ultrasphere = environment.Program("ultrasphere", ["engine.cpp"], LIBS=["mozjs-", "libultrasphere"])
+
+install_libultraspehre = environment.Install(environment["OURLIBPATH"], libultrasphere)
+
+Depends(ultrasphere, install_libultraspehre)
+
+Return("ultrasphere")

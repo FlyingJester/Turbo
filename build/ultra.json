@@ -1,0 +1,6 @@
+{
+	"plugins":["hello", "window", "audio", "file"],
+	"title":"UltraSphere",
+	"author":"Flying Jester",
+	"scripts":["hello.js"]
+}

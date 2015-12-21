@@ -1,0 +1,12 @@
+import os
+import sys
+
+Import("environment")
+
+plugins = []
+
+for f in os.listdir(os.getcwd()):
+    if os.path.isdir(f):
+        plugins.append([SConscript(dirs=[f], exports=["environment"])])
+
+Return("plugins")
