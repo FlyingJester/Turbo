@@ -6,9 +6,10 @@ Where TurboSphere fell short, UltraSphere will prevail.
 About UltraSphere
 -----------------
 
-UltraSphere is a JavaScript environment for the desktop. It solves the same problems that Node.JS does, while 
-being more cross-platform and supporting more processor architectures, and providing a lighter-weight scripting 
-environment and more powerful interface.
+UltraSphere is a JavaScript environment for the desktop. It is primarily intended for games on other graphical and 
+multimedia purposes, but it has all the facilities for general purpose programming as well. It aims to solve the 
+same problems that Node.JS does, while being more cross-platform and supporting more processor architectures, and 
+providing a lighter-weight scripting environment and more powerful interface.
 
 The chief goal of UltraSphere is to let the programmer use JavaScript wherever they would otherwise use C, C++.
 
