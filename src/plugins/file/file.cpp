@@ -9,7 +9,7 @@ namespace Ultra{
 
 class FilePlugin : public Plugin {
 
-    static const std::array<std::pair<const char *, StdCFile *(*)()>, 3> file_variables;
+    std::array<std::pair<const char *, IO *>, 3> file_variables;
     static const std::array<std::pair<const char *, int>, 3> seek_variables;
 
 public:
@@ -24,6 +24,10 @@ public:
 
     void init(JSContext *ctx) override{
         file_prototype = JS_NewPlainObject(ctx);
+        file_variables[0] = {"stdin", StdCFile::getStdin() };
+        file_variables[1] = {"stdout",StdCFile::getStdout()};
+        file_variables[2] = {"stderr",StdCFile::getStderr()};
+
         Plugin::init(ctx);    
     }
 
@@ -50,7 +54,7 @@ public:
         JS::RootedObject prototype(context(), file_prototype), outval(context());
 
         if(i<file_variables.size()){
-            wrapNativeObject(context(), file_variables[i].second(), &file_class, prototype, &outval);
+            wrapNativeObject(context(), file_variables[i].second, &file_class, prototype, &outval);
             vp.set(ObjectOrNullValue(outval));
         }
         else{
@@ -87,12 +91,6 @@ public:
         delete static_cast<IO *>(JS_GetPrivate(obj));
     }
 };
-
-const std::array<std::pair<const char *, StdCFile *(*)()>, 3> FilePlugin::file_variables = {{
-    { "stdin",  StdCFile::getStdin  },
-    { "stdout", StdCFile::getStdout },
-    { "stderr", StdCFile::getStderr }
-}};
 
 const std::array<std::pair<const char *, int>, 3> FilePlugin::seek_variables = {{
     { "seek_cur", SEEK_CUR },
