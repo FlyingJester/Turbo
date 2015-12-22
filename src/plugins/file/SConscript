@@ -1,5 +1,5 @@
 Import("environment")
 
-file = environment.SharedLibrary("file", ["file.cpp"], LIBS=["ultrasphere"])
+file = environment.SharedLibrary("file", ["file.cpp", "io.cpp", "c_file.cpp", "std_c_file.cpp"], LIBS=["ultrasphere"])
 
 Return("file")

@@ -115,7 +115,6 @@ static bool LoadPluginsFromConfig(JSContext *ctx, JS::HandleValue plugin_list_va
 
 static bool InitPlugins(JSContext *ctx, std::vector<PluginHandle> &plugins){
 
-    JS::RootedValue tmp(ctx);
     JS::RootedObject global(ctx);
     global.set(JS::CurrentGlobalOrNull(ctx));
 
@@ -126,6 +125,7 @@ static bool InitPlugins(JSContext *ctx, std::vector<PluginHandle> &plugins){
         JS::RootedObject plugin_obj(ctx);
 
         // Detect conflicts.
+        JS::RootedValue tmp(ctx);
         if(JS_GetProperty(ctx, global, name, &tmp) && tmp!=JS::UndefinedHandleValue){
             fprintf(stderr, "[UltraSphere]Plugin name '%s' is conflicting.\n", name);
             continue;
@@ -133,9 +133,9 @@ static bool InitPlugins(JSContext *ctx, std::vector<PluginHandle> &plugins){
 
         plugin->setObject(JS_NewPlainObject(ctx));
         plugin->getObject(&plugin_obj);
+        plugin_obj.set(plugin->getObject());
 
-        tmp.set(JS::ObjectOrNullValue(plugin_obj));
-
+        tmp.set(JS::ObjectOrNullValue(plugin->getObject()));
         JS_SetProperty(ctx, global, name, tmp);
 
         for(int i = 0; i<plugin->numFunctions(); i++){

@@ -1,19 +1,30 @@
 #include "plugin.hpp"
+#include "io.hpp"
+#include "std_c_file.hpp"
 #include <array>
 #include <cstdio>
+#include <cassert>
 
 namespace Ultra{
 
 class FilePlugin : public Plugin {
 
-    static const std::array<std::pair<const char *, FILE *>, 3> file_variables;
+    static const std::array<std::pair<const char *, StdCFile *(*)()>, 3> file_variables;
     static const std::array<std::pair<const char *, int>, 3> seek_variables;
 
 public:
     
+    static JSClass file_class;
+    JS::Heap<JSObject *> file_prototype;
+
     FilePlugin()
       : Plugin("file"){
 
+    }
+
+    void init(JSContext *ctx) override{
+        file_prototype = JS_NewPlainObject(ctx);
+        Plugin::init(ctx);    
     }
 
     int numFunctions() override {
@@ -36,9 +47,11 @@ public:
     void variableValue(int e, JS::MutableHandleValue vp) override {
         if(e<0) return;
         unsigned i = e;
+        JS::RootedObject prototype(context(), file_prototype), outval(context());
 
         if(i<file_variables.size()){
-
+            wrapNativeObject(context(), file_variables[i].second(), &file_class, prototype, &outval);
+            vp.set(ObjectOrNullValue(outval));
         }
         else{
             i-=file_variables.size();
@@ -65,21 +78,49 @@ public:
         }
     }
 
+    static bool FileConstructor(JSContext *ctx, unsigned argc, JS::Value *vp){
+        
+        
+        return true;
+    }
+    static void FileFinalizer(JSFreeOp *fop, JSObject *obj){
+        delete static_cast<IO *>(JS_GetPrivate(obj));
+    }
 };
 
-const std::array<std::pair<const char *, FILE *>, 3> FilePlugin::file_variables = {{
-    { "stdout", stdout },
-    { "stdin",  stdin  },
-    { "stderr", stderr }
+const std::array<std::pair<const char *, StdCFile *(*)()>, 3> FilePlugin::file_variables = {{
+    { "stdin",  StdCFile::getStdin  },
+    { "stdout", StdCFile::getStdout },
+    { "stderr", StdCFile::getStderr }
 }};
 
 const std::array<std::pair<const char *, int>, 3> FilePlugin::seek_variables = {{
-    { "current",   SEEK_CUR },
-    { "beginning", SEEK_SET },
-    { "ending",    SEEK_END }
+    { "seek_cur", SEEK_CUR },
+    { "seek_set", SEEK_SET },
+    { "seek_end", SEEK_END }
 }};
 
+JSClass FilePlugin::file_class = {
+    "File",
+    JSCLASS_HAS_PRIVATE,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    FilePlugin::FileFinalizer,
+    nullptr,
+    nullptr,
+    FilePlugin::FileConstructor,
+    nullptr,
+    nullptr
+};
+
 extern "C" Plugin *UltraPlugin(){
+    assert(FilePlugin::file_class.finalize  == FilePlugin::FileFinalizer);
+    assert(FilePlugin::file_class.construct == FilePlugin::FileConstructor);
     return new FilePlugin();
 }
 
