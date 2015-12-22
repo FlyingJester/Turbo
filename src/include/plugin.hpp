@@ -10,11 +10,11 @@ class Plugin{
     JS::Heap<JSObject *> obj_;
 protected:
     // This is set by init.
-    JSContext *m_ctx;
+    JSContext *ctx_;
     Plugin();
     Plugin(const char *a_name);
 
-    JSContext *context(){ return m_ctx; }
+    JSContext *context(){ return ctx_; }
 
 public:
 
@@ -30,7 +30,7 @@ public:
     virtual const char *functionName(int i) = 0;
 
     virtual int numVariables() = 0;
-    virtual void variableValue(int i, jsval *vp) = 0;
+    virtual void variableValue(int i, JS::MutableHandleValue vp) = 0;
     virtual const char *variableName(int i) = 0;
 
     virtual void getObject(JS::MutableHandleObject obj){ obj.set(obj_); }

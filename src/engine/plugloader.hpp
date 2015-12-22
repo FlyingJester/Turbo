@@ -26,7 +26,14 @@ public:
     ~PluginHandle();
 
     Plugin *plugin() { return plugin_; };
+    const Plugin *plugin() const { return plugin_; };
     void plugin(Plugin *p) { plugin_ = p; };
+
+    Plugin* operator->(){ return plugin(); }
+    const Plugin* operator->() const { return plugin(); }
+    Plugin& operator*(){ return *plugin(); }
+    const Plugin& operator*() const { return *plugin(); }
+
 };
 
 // On return, the plugin will still need to be initialized.

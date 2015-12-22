@@ -27,7 +27,7 @@ int numVariables() override {
     return 0;
 }
 
-void variableValue(int i, jsval *vp) override {
+void variableValue(int i, JS::MutableHandleValue vp) override {
 
 }
 

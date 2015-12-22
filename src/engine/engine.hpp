@@ -19,7 +19,7 @@ public:
     const char *functionName(int i) override;
 
     int numVariables() override;
-    void variableValue(int i, jsval *vp) override;
+    void variableValue(int i, JS::MutableHandleValue vp) override;
     const char *variableName(int i) override;
 
 };

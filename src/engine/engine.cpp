@@ -38,7 +38,7 @@ int Engine::numVariables(){
     return 0;
 }
 
-void Engine::variableValue(int i, jsval *vp){
+void Engine::variableValue(int i, JS::MutableHandleValue vp){
 
 }
 
@@ -120,9 +120,9 @@ static bool InitPlugins(JSContext *ctx, std::vector<PluginHandle> &plugins){
     global.set(JS::CurrentGlobalOrNull(ctx));
 
     for(PluginHandle &plugin : plugins){
-        plugin.plugin()->init(ctx);
+        plugin->init(ctx);
 
-        const char *name = plugin.plugin()->name();
+        const char *name = plugin->name();
         JS::RootedObject plugin_obj(ctx);
 
         // Detect conflicts.
@@ -131,20 +131,24 @@ static bool InitPlugins(JSContext *ctx, std::vector<PluginHandle> &plugins){
             continue;
         }
 
-        plugin.plugin()->setObject(JS_NewPlainObject(ctx));
-        plugin.plugin()->getObject(&plugin_obj);
+        plugin->setObject(JS_NewPlainObject(ctx));
+        plugin->getObject(&plugin_obj);
 
         tmp.set(JS::ObjectOrNullValue(plugin_obj));
 
         JS_SetProperty(ctx, global, name, tmp);
 
-
-        for(int i = 0; i<plugin.plugin()->numFunctions(); i++){
+        for(int i = 0; i<plugin->numFunctions(); i++){
             JS_DefineFunction(ctx, plugin_obj,
-                plugin.plugin()->functionName(i),
-                plugin.plugin()->functionCallback(i), 
+                plugin->functionName(i),
+                plugin->functionCallback(i), 
                 0, 0);
-            
+        }
+
+        for(int i = 0; i<plugin->numVariables(); i++){
+            JS::RootedValue val(ctx);
+            plugin->variableValue(i, &val);
+            JS_SetProperty(ctx, plugin_obj, plugin->variableName(i), val);
         }
         
     }
@@ -182,7 +186,7 @@ static bool LoadScriptsFromConfig(JSContext *ctx, JS::HandleValue script_list_va
 }
 
 // Parse and operate on a SpiderMonkey object representing our configuration.
-static bool RunConfig(JSContext *ctx, JS::RootedObject &config,  std::vector<PluginHandle> &plugins){
+static bool RunConfig(JSContext *ctx, JS::RootedObject &config, std::vector<PluginHandle> &plugins){
     JS::RootedValue plugin_list_val(ctx), script_list_val(ctx);
     if(!(JS_GetProperty(ctx, config, "plugins", &plugin_list_val) && JS_IsArrayObject(ctx, plugin_list_val))){
         fprintf(stderr, "[UltraSphere]Config lacks 'plugins' attribute as an array\n"); 
@@ -206,6 +210,23 @@ static bool RunConfig(JSContext *ctx, JS::RootedObject &config,  std::vector<Plu
     return true;
 }
 
+static void ReportError(JSContext *ctx, const char *msg, JSErrorReport *report) {
+    
+    const char * const filename = (report->filename)?report->filename:"";
+    
+    const char * error_type = "Generic Error";
+    if(JSREPORT_IS_WARNING(report->flags))
+        error_type="Warning";
+    else if(JSREPORT_IS_EXCEPTION(report->flags))
+        error_type="Exception";
+    else if(JSREPORT_IS_STRICT_MODE_ERROR(report->flags))
+        error_type="StrictError";
+    
+    fprintf(stderr, "[UltraSphere] %s in file %s line %i:\n\t%s\n",
+        error_type, filename, report->lineno+1, msg);
+
+}
+
 class UltraAutoJS{
 public:
     UltraAutoJS(){ JS_Init(); }
@@ -224,6 +245,8 @@ extern "C" int main(int argc, char *argv[]){
     if(JSContext *const ctx = context_ptr.get()){ // Scope for autorequest
 
         Engine engine;
+
+        JS_SetErrorReporter(runtime, ReportError);
 
         JSAutoRequest request(ctx);
         JS::RootedObject global(ctx, JS_NewGlobalObject(ctx, &engine.global(), nullptr, JS::FireOnNewGlobalHook));
