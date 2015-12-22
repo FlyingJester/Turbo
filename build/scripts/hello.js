@@ -1,2 +1,2 @@
 
-
+stdout.write("Hello, world!");
