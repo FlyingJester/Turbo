@@ -1,5 +1,7 @@
 #pragma once
 #include <jsapi.h>
+#include <string>
+#include <cassert>
 
 namespace Ultra{
 
@@ -41,17 +43,30 @@ public:
     virtual JS::Heap<JSObject *> &getObjectHandle() { return obj_; }
     virtual const JS::Heap<JSObject *> &getObjectHandle() const { return obj_; }
 
-    virtual void setObject(JSObject *obj){ obj_ = obj; };
-    virtual void setObject(JS::HandleObject obj){ obj_ = obj; }
+    template<typename T>
+    static bool setError(JSContext *ctx, const T &err_z){
+        const std::string err = err_z;
+        JS::RootedValue err_val(ctx, JS::StringValue(JS_NewStringCopyN(ctx, err.c_str(), err.length())));
+        JS_SetPendingException(ctx, err_val);
+        return false;
+    }
 
     // Small helper for wrapping native objects.
-    template<typename T>
+    template<class T>
     static void wrapNativeObject(JSContext *ctx, T *that, const JSClass *clazz, JS::HandleObject prototype, JS::MutableHandle<JSObject*> aobj){
         JS::RootedObject global(ctx, JS::CurrentGlobalOrNull(ctx));
         aobj.set(JS_NewObjectWithGivenProto(ctx, clazz, prototype, global));
         JS_SetPrivate(aobj, that);
     }
 
+    template<class T>
+    static T *getSelfObject(JSContext *ctx, JS::Value *vp, JS::CallArgs *args, const JSClass *clazz){
+        JS::RootedValue that_val(ctx, JS_THIS(ctx, vp));
+        if((!that_val.isObject()) || that_val.isNull() || that_val.isUndefined())
+            return nullptr;
+        JS::RootedObject obj(ctx, that_val.toObjectOrNull());
+        return static_cast<T *>(JS_GetInstancePrivate(ctx, obj, clazz, args));
+    }
 };
 
 } // namespace Ultra

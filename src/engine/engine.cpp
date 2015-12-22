@@ -131,7 +131,6 @@ static bool InitPlugins(JSContext *ctx, std::vector<PluginHandle> &plugins){
             continue;
         }
 
-        plugin->setObject(JS_NewPlainObject(ctx));
         plugin->getObject(&plugin_obj);
         plugin_obj.set(plugin->getObject());
 

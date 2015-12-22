@@ -21,6 +21,7 @@ const char *Plugin::name(){
     // This is guaranteed to be called before any other members.
 void Plugin::init(JSContext *ctx){
     ctx_ = ctx;
+    obj_ = JS_NewPlainObject(ctx_);
 }
 
 } // namespace Ultra
