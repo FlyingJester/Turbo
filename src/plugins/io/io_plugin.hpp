@@ -6,18 +6,22 @@
 namespace Ultra{
 
 
-class FilePlugin : public Plugin {
+class IOPlugin : public Plugin {
 
     std::array<std::pair<const char *, IO *>, 3> io_variables;
+    static const std::array<std::pair<const char *, JSNative>, 1> functions;
+
     static const std::array<std::pair<const char *, int>, 3> seek_variables;
     static const std::array<JSFunctionSpec, 5> io_methods;
 
 public:
     
-    static JSClass io_class;
-    JS::Heap<JSObject *> io_prototype;
+    // Classes and prototypes are held by the plugin object to
+    // ensure their lifetimes match the context.
+    static JSClass io_class, c_file_class;
+    JS::Heap<JSObject *> io_prototype, c_file_prototype;
 
-    FilePlugin() : Plugin("file"){}
+    IOPlugin() : Plugin("io"){}
 
     void init(JSContext *ctx) override;
 
@@ -28,8 +32,6 @@ public:
     void variableValue(int e, JS::MutableHandleValue vp) override;
     const char *variableName(int e) override;
 
-    static bool IOConstructor(JSContext *ctx, unsigned argc, JS::Value *vp);
-    static void IOFinalizer(JSFreeOp *fop, JSObject *obj);
 };
 
 } // namespace Ultra

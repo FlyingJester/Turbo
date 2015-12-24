@@ -1,4 +1,4 @@
-#include "file.hpp"
+#include "io_plugin.hpp"
 #include "io.hpp"
 #include "std_c_file.hpp"
 #include <cstdio>
@@ -6,37 +6,42 @@
 
 namespace Ultra{
 
-void FilePlugin::init(JSContext *ctx){
+void IOPlugin::init(JSContext *ctx){
     
     Plugin::init(ctx);
 
     JS::RootedObject l_plugin_obj(ctx, getObject()),
         object_proto(ctx, JS_GetObjectPrototype(ctx, l_plugin_obj));
     io_prototype = JS_InitClass(ctx, l_plugin_obj, object_proto,
-        &io_class, IOConstructor, 0, nullptr, io_methods.data(), nullptr, nullptr);
+        &io_class, nullptr, 0, nullptr, io_methods.data(), nullptr, nullptr);
+
+    JS::RootedObject l_io_prototype(ctx, io_prototype);
+    c_file_prototype = JS_InitClass(ctx, l_plugin_obj, l_io_prototype,
+        &c_file_class, CFile::CFileConstructor, 0, nullptr, io_methods.data(), nullptr, nullptr);
+
     io_variables[0] = {"stdin", StdCFile::getStdin() };
     io_variables[1] = {"stdout",StdCFile::getStdout()};
     io_variables[2] = {"stderr",StdCFile::getStderr()};
    
 }
 
-int FilePlugin::numFunctions(){
+int IOPlugin::numFunctions(){
     return 0;
 }
 
-JSNative FilePlugin::functionCallback(int i){
+JSNative IOPlugin::functionCallback(int i){
     return nullptr;
 }
 
-const char *FilePlugin::functionName(int i){
+const char *IOPlugin::functionName(int i){
     return nullptr;
 }
 
-int FilePlugin::numVariables(){
+int IOPlugin::numVariables(){
     return io_variables.size() + seek_variables.size();
 }
 
-void FilePlugin::variableValue(int e, JS::MutableHandleValue vp){
+void IOPlugin::variableValue(int e, JS::MutableHandleValue vp){
     if(e<0) return;
     unsigned i = e;
     JS::RootedObject prototype(context(), io_prototype), outval(context());
@@ -53,7 +58,7 @@ void FilePlugin::variableValue(int e, JS::MutableHandleValue vp){
     }
 }
 
-const char *FilePlugin::variableName(int e){
+const char *IOPlugin::variableName(int e){
     if(e<0) return nullptr;
     unsigned i = e;
 
@@ -70,21 +75,17 @@ const char *FilePlugin::variableName(int e){
     }
 }
 
-bool FilePlugin::IOConstructor(JSContext *ctx, unsigned argc, JS::Value *vp){
-    return true;
-}
+const std::array<std::pair<const char *, JSNative>, 1> IOPlugin::functions = {{
+    {"file", CFile::CFileConstructor}
+}};
 
-void FilePlugin::IOFinalizer(JSFreeOp *fop, JSObject *obj){
-    delete static_cast<IO *>(JS_GetPrivate(obj));
-}
-
-const std::array<std::pair<const char *, int>, 3> FilePlugin::seek_variables = {{
+const std::array<std::pair<const char *, int>, 3> IOPlugin::seek_variables = {{
     { "seek_cur", SEEK_CUR },
     { "seek_set", SEEK_SET },
     { "seek_end", SEEK_END }
 }};
 
-const std::array<JSFunctionSpec, 5> FilePlugin::io_methods = {{
+const std::array<JSFunctionSpec, 5> IOPlugin::io_methods = {{
     JS_FN("read", IO::read, 1, 0),
     JS_FN("write", IO::write, 1, 0),
     JS_FN("seek", IO::seek, 2, 0),
@@ -92,7 +93,7 @@ const std::array<JSFunctionSpec, 5> FilePlugin::io_methods = {{
     JS_FS_END
 }};
 
-JSClass FilePlugin::io_class = {
+JSClass IOPlugin::io_class = {
     "IO",
     JSCLASS_HAS_PRIVATE,
     nullptr,
@@ -102,16 +103,34 @@ JSClass FilePlugin::io_class = {
     nullptr,
     nullptr,
     nullptr,
-    FilePlugin::IOFinalizer,
+    IO::IOFinalizer, // finalizer
     nullptr,
     nullptr,
-    FilePlugin::IOConstructor,
+    nullptr, // constructor
+    nullptr,
+    nullptr
+};
+
+JSClass IOPlugin::c_file_class = {
+    "File",
+    JSCLASS_HAS_PRIVATE,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+    CFile::CFileFinalizer, // finalizer
+    nullptr,
+    nullptr,
+    CFile::CFileConstructor, // constructor
     nullptr,
     nullptr
 };
 
 extern "C" Plugin *UltraPlugin(){
-    return new FilePlugin();
+    return new IOPlugin();
 }
 
 } // namespace Ultra

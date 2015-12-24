@@ -30,6 +30,8 @@ public:
     static bool read(JSContext *ctx, unsigned argc, JS::Value *vp);
     static bool write(JSContext *ctx, unsigned argc, JS::Value *vp);
 
+    static void IOFinalizer(JSFreeOp *fop, JSObject *obj);
+
 };
 
 } // namespace Ultra

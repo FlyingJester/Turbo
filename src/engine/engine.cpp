@@ -80,25 +80,15 @@ static bool LoadPluginsFromConfig(JSContext *ctx, JS::HandleValue plugin_list_va
         return false;
     }
     else{
-#ifndef NDEBUG
-        printf("[UltraSphere]Loading %i plugins.\n", (int)length);
-#endif
         JS::RootedValue plugin_val(ctx);
         for(uint32_t i = 0; i<length; i++){
             JS_GetElement(ctx, plugin_list, i, &plugin_val);
             if(const char *plugin_name = JS_EncodeString(ctx, plugin_val.toString())){
-#ifndef NDEBUG
-                printf("[UltraSphere]Loading plugin %s.\n", plugin_name);
-#endif 
                 
                 PluginHandle plugin = LoadPlugin("plugins", plugin_name);
                 
-                if(plugin.plugin()){
-#ifndef NDEBUG
-                    printf("[UltraSphere]Successfully loaded plugin %s.\n", plugin_name);
-#endif                     
+                if(plugin.plugin())
                     plugins.push_back(std::move(plugin));
-                }
                 else
                     fprintf(stderr, "[UltraSphere]Could not load plugin %s\n", plugin_name);
 
@@ -149,9 +139,10 @@ static bool InitPlugins(JSContext *ctx, std::vector<PluginHandle> &plugins){
             plugin->variableValue(i, &val);
             JS_SetProperty(ctx, plugin_obj, plugin->variableName(i), val);
         }
-        
+#ifndef NDEBUG
+        printf("[UltraSphere]Loaded plugin %s\n", name);
+#endif
     }
-
     return true;
 
 }

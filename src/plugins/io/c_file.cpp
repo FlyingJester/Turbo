@@ -1,4 +1,5 @@
 #include "c_file.hpp"
+#include "io_plugin.hpp"
 
 namespace Ultra{
 
@@ -29,5 +30,18 @@ bool CFile::writeByte(unsigned char c){
 unsigned char CFile::readByte(){
     return fgetc(file_);
 }
+
+bool CFile::CFileConstructor(JSContext *ctx, unsigned argc, JS::Value *vp){
+    JS::CallArgs args = CallArgsFromVp(argc, vp);
+    args.rval().set(JS::ObjectOrNullValue(JS_NewObjectForConstructor(ctx, &IOPlugin::c_file_class, args)));
+    return true;
+}
+
+void CFile::CFileFinalizer(JSFreeOp *fop, JSObject *obj){
+    delete static_cast<CFile *>(JS_GetPrivate(obj));
+    // Ensure that the pointer is lost...
+    JS_SetPrivate(obj, nullptr);
+}
+
 
 } // namespace Ultra

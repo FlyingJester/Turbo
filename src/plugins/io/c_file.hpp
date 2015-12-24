@@ -21,6 +21,10 @@ public:
     
     bool writeByte(unsigned char c) override;
     unsigned char readByte() override;
+
+    static bool CFileConstructor(JSContext *ctx, unsigned argc, JS::Value *vp);
+    static void CFileFinalizer(JSFreeOp *fop, JSObject *obj);
+
 };
 
 } // namespace Ultra

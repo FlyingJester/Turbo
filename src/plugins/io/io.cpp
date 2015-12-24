@@ -1,5 +1,5 @@
 #include "io.hpp"
-#include "file.hpp"
+#include "io_plugin.hpp"
 
 namespace Ultra{
 
@@ -16,14 +16,14 @@ unsigned char IO::readByte(){
 
 bool IO::seekable(JSContext *ctx, unsigned argc, JS::Value *vp){
     JS::CallArgs args = CallArgsFromVp(argc, vp);
-    IO *that = Plugin::getSelfObject<IO>(ctx, vp, &args, &FilePlugin::io_class);
+    IO *that = Plugin::getSelfObject<IO>(ctx, vp, &args, &IOPlugin::io_class);
     args.rval().set(JS::BooleanValue(that->seekable()));
     return true;
 }
 
 bool IO::seek(JSContext *ctx, unsigned argc, JS::Value *vp){
     JS::CallArgs args = CallArgsFromVp(argc, vp);
-    IO *that = Plugin::getSelfObject<IO>(ctx, vp, &args, &FilePlugin::io_class);
+    IO *that = Plugin::getSelfObject<IO>(ctx, vp, &args, &IOPlugin::io_class);
     if(!that)
         return Plugin::setError(ctx, "IO::seek Error: Invalid IO Object");
 
@@ -47,7 +47,7 @@ bool IO::seek(JSContext *ctx, unsigned argc, JS::Value *vp){
 
 bool IO::read(JSContext *ctx, unsigned argc, JS::Value *vp){
     JS::CallArgs args = CallArgsFromVp(argc, vp);
-    IO *that = Plugin::getSelfObject<IO>(ctx, vp, &args, &FilePlugin::io_class);
+    IO *that = Plugin::getSelfObject<IO>(ctx, vp, &args, &IOPlugin::io_class);
     if(!that)
         return Plugin::setError(ctx, "IO::read Error: Invalid IO Object");
 
@@ -76,7 +76,7 @@ bool IO::read(JSContext *ctx, unsigned argc, JS::Value *vp){
 
 bool IO::write(JSContext *ctx, unsigned argc, JS::Value *vp){
     JS::CallArgs args = CallArgsFromVp(argc, vp);
-    IO *that = Plugin::getSelfObject<IO>(ctx, vp, &args, &FilePlugin::io_class);
+    IO *that = Plugin::getSelfObject<IO>(ctx, vp, &args, &IOPlugin::io_class);
     if(!that)
         return Plugin::setError(ctx, "IO::write Error: Invalid IO Object");
 
@@ -101,6 +101,12 @@ bool IO::write(JSContext *ctx, unsigned argc, JS::Value *vp){
     }
 */
     return true;
+}
+
+void IO::IOFinalizer(JSFreeOp *fop, JSObject *obj){
+    delete static_cast<IO *>(JS_GetPrivate(obj));
+    // Ensure that the pointer is lost...
+    JS_SetPrivate(obj, nullptr);
 }
 
 }

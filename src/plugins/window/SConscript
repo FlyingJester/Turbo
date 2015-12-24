@@ -1,5 +1,5 @@
 Import("environment")
 
-window = environment.SharedLibrary("window", ["window.cpp"], LIBS=["ultrasphere"])
+sapphire = environment.SharedLibrary("sapphire", ["window.cpp", "sapphire.cpp"], LIBS=["ultrasphere"])
 
-Return("window")
+Return("sapphire")
