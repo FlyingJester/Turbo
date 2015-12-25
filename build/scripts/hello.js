@@ -11,5 +11,8 @@ io.stdout.write(Object.keys(io) + "\n");
 
 let that = new io.File("files/example.json");
 
-io.stdout.write(Object.keys(that) + "\n");
-that.write("lol?")
+let bufview = new Int8Array(that.read(that.size));
+
+io.stdout.write("Let's read a file in and then print it out!\n\n");
+
+io.stdout.write(String.fromCharCode.apply(null, bufview));
