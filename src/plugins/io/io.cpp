@@ -45,6 +45,48 @@ bool IO::seek(JSContext *ctx, unsigned argc, JS::Value *vp){
     return true; 
 }
 
+bool IO::size(JSContext *ctx, unsigned argc, JS::Value *vp){
+    JS::CallArgs args = CallArgsFromVp(argc, vp);
+    IO *that = Plugin::getSelfObject<IO>(ctx, vp, &args, &IOPlugin::io_class);
+    if(!that)
+        return Plugin::setError(ctx, "IO::size Error: Invalid IO Object");
+    
+    args.rval().set(JS::RootedValue(ctx, JS_NumberValue(that->size())));
+    return true;
+}
+
+bool IO::setPosition(JSContext *ctx, unsigned argc, JS::Value *vp){
+    JS::CallArgs args = CallArgsFromVp(argc, vp);
+    IO *that = Plugin::getSelfObject<IO>(ctx, vp, &args, &IOPlugin::io_class);
+    if(!that)
+        return Plugin::setError(ctx, "IO::setPosition Error: Invalid IO Object");
+
+    if(!that->seekable())
+        return Plugin::setError(ctx, "IO::setPosition Error: IO Object is not seekable");
+
+    if(args.length()<1)
+        return Plugin::setError(ctx, "IO::setPosition Error: requires two arguments");
+
+    if(!args[0].isNumber())
+        return Plugin::setError(ctx, "IO::setPosition Error: argument 0 must be a number.");
+
+    if(!that->seek(args[0].toNumber(), SEEK_SET))
+        return Plugin::setError(ctx, "IO::setPosition Error: Internal error");
+
+    args.rval().set(args[0]);
+    return true; 
+}
+
+bool IO::getPosition(JSContext *ctx, unsigned argc, JS::Value *vp){
+    JS::CallArgs args = CallArgsFromVp(argc, vp);
+    IO *that = Plugin::getSelfObject<IO>(ctx, vp, &args, &IOPlugin::io_class);
+    if(!that)
+        return Plugin::setError(ctx, "IO::getPosition Error: Invalid IO Object");
+    
+    args.rval().set(JS::RootedValue(ctx, JS_NumberValue(that->at())));
+    return true;
+}
+
 bool IO::read(JSContext *ctx, unsigned argc, JS::Value *vp){
     JS::CallArgs args = CallArgsFromVp(argc, vp);
     IO *that = Plugin::getSelfObject<IO>(ctx, vp, &args, &IOPlugin::io_class);
@@ -80,6 +122,9 @@ bool IO::write(JSContext *ctx, unsigned argc, JS::Value *vp){
     if(!that)
         return Plugin::setError(ctx, "IO::write Error: Invalid IO Object");
 
+    if(!that->writable())
+        return Plugin::setError(ctx, "IO::write Error: Object is not writable");
+
     if(args.length()<1)
         return Plugin::setError(ctx, "IO::write Error: requires one argument");
     
@@ -92,7 +137,6 @@ bool IO::write(JSContext *ctx, unsigned argc, JS::Value *vp){
         JS_free(ctx, (void *)str);
 
         return err || Plugin::setError(ctx, "IO::write Error: Internal error");
-            
     }
 /*
     if(CheckForSingleArg(ctx, args, Turbo::TypedArray, __func__, false)){
@@ -100,6 +144,9 @@ bool IO::write(JSContext *ctx, unsigned argc, JS::Value *vp){
         js::GetArrayBufferViewLengthAndData(buffer_root, &l, &data);
     }
 */
+    else
+        return Plugin::setError(ctx, "IO::write Error: Invalid type for argument 0");
+    
     return true;
 }
 

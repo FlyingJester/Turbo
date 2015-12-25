@@ -16,10 +16,12 @@ bool RunScript(JSContext *ctx, const std::string &directory, const std::string &
     buffer << configfile.rdbuf();
 
     JS::OwningCompileOptions options(ctx);
-    options.setUTF8(true);
+
     options.setFileAndLine(ctx, script_name.c_str(), 0);
-    options.setIntroductionScript(nullptr);
-    options.setVersion(JSVERSION_LATEST);
+    options.setIntroductionScript(nullptr).setVersion(JSVERSION_LATEST).setUTF8(true);
+
+    options.asmJSOption = true;
+    options.strictOption = true;
 
     JS::RootedScript script(ctx);
     JS::RootedValue rval(ctx);

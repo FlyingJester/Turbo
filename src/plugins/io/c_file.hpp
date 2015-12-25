@@ -6,8 +6,9 @@ namespace Ultra{
 
 class CFile : public IO{
     FILE *file_;
+    const bool r_, w_;
 public:
-    CFile(FILE *);
+    CFile(FILE *, bool r, bool w);
     CFile() = delete;
     virtual ~CFile();
 
@@ -18,7 +19,13 @@ public:
     
     bool read(void *to, unsigned n_bytes) override;
     bool write(const void *from, unsigned n_bytes) override;
+
+    int size() override;
+    int at() override;
     
+    bool readable() override;
+    bool writable() override;
+
     bool writeByte(unsigned char c) override;
     unsigned char readByte() override;
 
