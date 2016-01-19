@@ -2,11 +2,11 @@
 
 Import("environment")
 
-libultrasphere = environment.SharedLibrary("ultrasphere", ["plugin.cpp", "script.cpp", "plugloader.cpp"], LIBS=["mozjs-"])
-ultrasphere = environment.Program("ultrasphere", ["engine.cpp"], LIBS=["mozjs-", "libultrasphere"])
+libturbo = environment.SharedLibrary("turbo", ["plugin.cpp", "script.cpp", "plugloader.cpp"], LIBS=["mozjs-"])
+turbo = environment.Program("turbo", ["engine.cpp"], LIBS=["mozjs-", "libturbo"])
 
-install_libultraspehre = environment.Install(environment["OURLIBPATH"], libultrasphere)
+install_libturbo = environment.Install(environment["OURLIBPATH"], libturbo)
 
-Depends(ultrasphere, install_libultraspehre)
+Depends(turbo, install_libturbo)
 
-Return("ultrasphere")
+Return("turbo")

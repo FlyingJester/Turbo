@@ -1,7 +1,7 @@
 #pragma once
 #include <jsapi.h>
 
-namespace Ultra{
+namespace Turbo{
 
 // The underlying object for a JS-side file.
 class IO{
@@ -42,4 +42,4 @@ public:
 
 };
 
-} // namespace Ultra
+} // namespace Turbo

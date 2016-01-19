@@ -1,6 +1,6 @@
 #include "plugin.hpp"
 
-namespace Ultra{
+namespace Turbo{
 
 Plugin::Plugin()
   : name_(nullptr)
@@ -24,4 +24,4 @@ void Plugin::init(JSContext *ctx){
     obj_ = JS_NewPlainObject(ctx_);
 }
 
-} // namespace Ultra
+} // namespace Turbo

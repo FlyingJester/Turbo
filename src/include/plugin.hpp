@@ -3,7 +3,7 @@
 #include <string>
 #include <cassert>
 
-namespace Ultra{
+namespace Turbo{
 
 class Plugin{
     const char *name_;
@@ -69,4 +69,4 @@ public:
     }
 };
 
-} // namespace Ultra
+} // namespace Turbo

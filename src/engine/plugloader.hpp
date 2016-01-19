@@ -3,7 +3,7 @@
 #include <string>
 #include <jsapi.h>
 
-namespace Ultra {
+namespace Turbo {
 
 class PluginHandle{
     void *handle_;
@@ -39,4 +39,4 @@ public:
 // On return, the plugin will still need to be initialized.
 PluginHandle LoadPlugin(const std::string &directory, const std::string &plugin_name);
 
-} // namespace Ultra
+} // namespace Turbo

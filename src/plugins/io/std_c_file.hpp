@@ -1,7 +1,7 @@
 #pragma once
 #include "c_file.hpp"
 
-namespace Ultra {
+namespace Turbo {
 
 class StdCFile : public CFile {
     StdCFile(FILE *, bool r, bool w);
@@ -18,4 +18,4 @@ public:
 
 };
 
-} // namespace Ultra
+} // namespace Turbo

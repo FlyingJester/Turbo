@@ -6,7 +6,7 @@
     #include <dlfcn.h>
 #endif
 
-namespace Ultra {
+namespace Turbo {
 
 #ifdef _WIN32
 
@@ -44,7 +44,7 @@ namespace Ultra {
         if(void *plug = dlopen(lib.c_str(), RTLD_LAZY|RTLD_LOCAL))
             return plug;
         else{
-            fprintf(stderr, "[UltraSphere]Error loading shared library %s for plugin %s\n[UltraSphere]%s\n", lib.c_str(), name.c_str(), dlerror());
+            fprintf(stderr, "[Turbo]Error loading shared library %s for plugin %s\n[TurboSphere]%s\n", lib.c_str(), name.c_str(), dlerror());
             return nullptr;
         }
     }
@@ -74,8 +74,8 @@ PluginHandle LoadPlugin(const std::string &directory, const std::string &plugin_
         PluginHandle plugin(handle);
         LoadPluginFunctionType loader;
 
-        if(!(loader = (LoadPluginFunctionType)LibraryFunction(handle, "UltraPlugin"))){
-            fprintf(stderr, "[UltraSphere]No entry point for plugin %s\n", plugin_name.c_str());
+        if(!(loader = (LoadPluginFunctionType)LibraryFunction(handle, "TurboPlugin"))){
+            fprintf(stderr, "[Turbo]No entry point for plugin %s\n", plugin_name.c_str());
             return PluginHandle(nullptr);
         }
 
@@ -84,14 +84,14 @@ PluginHandle LoadPlugin(const std::string &directory, const std::string &plugin_
             return plugin;
         }
         else{
-            fprintf(stderr, "[UltraSphere]Null plugin %s\n", plugin_name.c_str());
+            fprintf(stderr, "[Turbo]Null plugin %s\n", plugin_name.c_str());
             return PluginHandle(nullptr);
         }
     }
     else{
-        fprintf(stderr, "[UltraSphere]Could not open shared library for plugin %s\n", plugin_name.c_str());
+        fprintf(stderr, "[Turbo]Could not open shared library for plugin %s\n", plugin_name.c_str());
         return PluginHandle(nullptr);
     }
 }
 
-} // namespace Ultra
+} // namespace Turbo

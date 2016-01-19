@@ -5,10 +5,10 @@ Import("environment")
 
 environment.Append(CPPPATH=[os.path.join(os.getcwd(), "include")])
 
-ultrasphere = SConscript(dirs=["engine"],  exports=["environment"])
+turbo = SConscript(dirs=["engine"],  exports=["environment"])
 plugins     = SConscript(dirs=["plugins"], exports=["environment"])
 
-environment.Install(environment["ENGINEPATH"], ultrasphere)
+environment.Install(environment["ENGINEPATH"], turbo)
 environment.Install(environment["PLUGINPATH"], plugins)
 
-Return("ultrasphere")
+Return("turbo")

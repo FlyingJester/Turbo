@@ -1,5 +1,0 @@
-Import("environment")
-
-hello_world = environment.SharedLibrary("hello", ["hello.cpp"], LIBS=["mozjs-", "ultrasphere"])
-
-Return("hello_world")

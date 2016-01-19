@@ -1,7 +1,7 @@
 #include "c_file.hpp"
 #include "io_plugin.hpp"
 
-namespace Ultra{
+namespace Turbo{
 
 CFile::CFile(FILE *f, bool r, bool w)
   : file_(f), r_(r), w_(w){
@@ -117,4 +117,4 @@ void CFile::CFileFinalizer(JSFreeOp *fop, JSObject *obj){
 }
 
 
-} // namespace Ultra
+} // namespace Turbo

@@ -3,7 +3,7 @@
 #include <memory>
 #include <jsapi.h>
 
-namespace Ultra {
+namespace Turbo {
 
 class Engine : public Plugin{
     JSClass global_;
@@ -25,4 +25,4 @@ public:
 };
 
 
-} // namespace Ultra
+} // namespace Turbo

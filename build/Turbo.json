@@ -1,0 +1,6 @@
+{
+	"plugins":["io"],
+	"title":"Turbo Game Engine",
+	"author":"Flying Jester",
+	"scripts":["hello.js"]
+}

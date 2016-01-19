@@ -1,10 +1,10 @@
 #include "std_c_file.hpp"
 
-Ultra::StdCFile::~StdCFile(){}
+Turbo::StdCFile::~StdCFile(){}
 
-Ultra::StdCFile::StdCFile(FILE *f, bool r, bool w)
+Turbo::StdCFile::StdCFile(FILE *f, bool r, bool w)
   : CFile(f, r, w){}
 
-bool Ultra::StdCFile::seekable(){ return false; }
+bool Turbo::StdCFile::seekable(){ return false; }
 
-int Ultra::StdCFile::size() { return 0; }
+int Turbo::StdCFile::size() { return 0; }

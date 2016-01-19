@@ -15,4 +15,4 @@ if os.name=="posix":
         OURLIBPATH = os.path.join(os.getcwd(), "lib")
     )
 
-ultrasphere = SConscript(dirs=["src"], exports=["environment"])
+turbo = SConscript(dirs=["src"], exports=["environment"])

@@ -1,6 +1,0 @@
-{
-	"plugins":["hello", "sapphire", "audio", "io"],
-	"title":"UltraSphere",
-	"author":"Flying Jester",
-	"scripts":["hello.js"]
-}

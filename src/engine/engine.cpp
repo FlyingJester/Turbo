@@ -8,10 +8,10 @@
 #include <sstream>
 #include <cstdlib>
 
-namespace Ultra{
+namespace Turbo{
 
 Engine::Engine()
-  : Plugin("ultra"){
+  : Plugin("Turbo"){
     memset(&global_, 0, sizeof(JSClass));
     global_.name = "global";
     global_.flags = JSCLASS_GLOBAL_FLAGS;
@@ -53,7 +53,7 @@ static bool LoadConfig(JSContext *ctx, const std::string &filename, JS::MutableH
 
     std::ifstream configfile(filename);
     if(!configfile){
-        fprintf(stderr, "[UltraSphere]Could not open configuration file %s\n", filename.c_str());
+        fprintf(stderr, "[Turbo]Could not open configuration file %s\n", filename.c_str());
         return false;
     }
     buffer << configfile.rdbuf();
@@ -63,7 +63,7 @@ static bool LoadConfig(JSContext *ctx, const std::string &filename, JS::MutableH
     config.set(JS_NewStringCopyN(ctx, buffer.str().c_str(), buffer.str().size()));
 
     if(!(JS_ParseJSON(ctx, config, &to_val) && JS_ValueToObject(ctx, to_val, to))){
-        fprintf(stderr, "[UltraSphere]Could not parse JSON file %s\n", filename.c_str());
+        fprintf(stderr, "[Turbo]Could not parse JSON file %s\n", filename.c_str());
         return false;
     }
     return true;
@@ -76,7 +76,7 @@ static bool LoadPluginsFromConfig(JSContext *ctx, JS::HandleValue plugin_list_va
     uint32_t length;
     // Something is dreadfully wrong if this fails when JS_IsArrayObject succeeded.
     if(!(JS_ValueToObject(ctx, plugin_list_val, &plugin_list) && JS_GetArrayLength(ctx, plugin_list, &length))){
-        fprintf(stderr, "[UltraSphere]Internal error handling plugin array\n");
+        fprintf(stderr, "[Turbo]Internal error handling plugin array\n");
         return false;
     }
     else{
@@ -90,12 +90,12 @@ static bool LoadPluginsFromConfig(JSContext *ctx, JS::HandleValue plugin_list_va
                 if(plugin.plugin())
                     plugins.push_back(std::move(plugin));
                 else
-                    fprintf(stderr, "[UltraSphere]Could not load plugin %s\n", plugin_name);
+                    fprintf(stderr, "[Turbo]Could not load plugin %s\n", plugin_name);
 
                 JS_free(ctx, (void *)plugin_name);
             }
             else{
-                fprintf(stderr, "[UltraSphere]Invalid plugin %i\n", i);
+                fprintf(stderr, "[Turbo]Invalid plugin %i\n", i);
                 return false;
             }
         }
@@ -117,7 +117,7 @@ static bool InitPlugins(JSContext *ctx, std::vector<PluginHandle> &plugins){
         // Detect conflicts.
         JS::RootedValue tmp(ctx);
         if(JS_GetProperty(ctx, global, name, &tmp) && tmp!=JS::UndefinedHandleValue){
-            fprintf(stderr, "[UltraSphere]Plugin name '%s' is conflicting.\n", name);
+            fprintf(stderr, "[Turbo]Plugin name '%s' is conflicting.\n", name);
             continue;
         }
 
@@ -140,7 +140,7 @@ static bool InitPlugins(JSContext *ctx, std::vector<PluginHandle> &plugins){
             JS_SetProperty(ctx, plugin_obj, plugin->variableName(i), val);
         }
 #ifndef NDEBUG
-        printf("[UltraSphere]Loaded plugin %s\n", name);
+        printf("[Turbo]Loaded plugin %s\n", name);
 #endif
     }
     return true;
@@ -154,12 +154,12 @@ static bool LoadScriptsFromConfig(JSContext *ctx, JS::HandleValue script_list_va
     uint32_t length;
     // Something is dreadfully wrong if this fails when JS_IsArrayObject succeeded.
     if(!(JS_ValueToObject(ctx, script_list_val, &script_list) && JS_GetArrayLength(ctx, script_list, &length))){
-        fprintf(stderr, "[UltraSphere]Internal error handling plugin array\n");
+        fprintf(stderr, "[Turbo]Internal error handling plugin array\n");
         return false;
     }
     else{
 #ifndef NDEBUG
-        printf("[UltraSphere]Loading %i scripts.\n", (int)length);
+        printf("[Turbo]Loading %i scripts.\n", (int)length);
 #endif
         JS::RootedValue script_name_val(ctx);
         for(uint32_t i = 0; i<length; i++){
@@ -179,12 +179,12 @@ static bool LoadScriptsFromConfig(JSContext *ctx, JS::HandleValue script_list_va
 static bool RunConfig(JSContext *ctx, JS::RootedObject &config, std::vector<PluginHandle> &plugins){
     JS::RootedValue plugin_list_val(ctx), script_list_val(ctx);
     if(!(JS_GetProperty(ctx, config, "plugins", &plugin_list_val) && JS_IsArrayObject(ctx, plugin_list_val))){
-        fprintf(stderr, "[UltraSphere]Config lacks 'plugins' attribute as an array\n"); 
+        fprintf(stderr, "[Turbo]Config lacks 'plugins' attribute as an array\n"); 
         return false;
     }
 
     if(!(JS_GetProperty(ctx, config, "scripts", &script_list_val) && JS_IsArrayObject(ctx, script_list_val))){
-        fprintf(stderr, "[UltraSphere]Config lacks 'scripts' attribute as an array\n"); 
+        fprintf(stderr, "[Turbo]Config lacks 'scripts' attribute as an array\n"); 
         return false;
     }
 
@@ -212,19 +212,19 @@ static void ReportError(JSContext *ctx, const char *msg, JSErrorReport *report) 
     else if(JSREPORT_IS_STRICT_MODE_ERROR(report->flags))
         error_type="StrictError";
     
-    fprintf(stderr, "[UltraSphere] %s in file %s line %i:\n\t%s\n",
+    fprintf(stderr, "[Turbo] %s in file %s line %i:\n\t%s\n",
         error_type, filename, report->lineno+1, msg);
 
 }
 
-class UltraAutoJS{
+class TurboAutoJS{
 public:
-    UltraAutoJS(){ JS_Init(); }
-    ~UltraAutoJS(){ JS_ShutDown(); }
+    TurboAutoJS(){ JS_Init(); }
+    ~TurboAutoJS(){ JS_ShutDown(); }
 };
 
 extern "C" int main(int argc, char *argv[]){
-    UltraAutoJS js;
+    TurboAutoJS js;
     
     std::unique_ptr<JSRuntime, void(*)(JSRuntime *)> runtime_ptr(JS_NewRuntime(8L * 1024L * 1024L), JS_DestroyRuntime);
     JSRuntime *const runtime = runtime_ptr.get();
@@ -249,13 +249,13 @@ extern "C" int main(int argc, char *argv[]){
         JSAutoCompartment compartment(ctx, global);
         
         if(!JS_InitStandardClasses(ctx, global)){
-            fprintf(stderr, "[UltraSphere]Could not initialize JS standard classes\n");
+            fprintf(stderr, "[Turbo]Could not initialize JS standard classes\n");
             return EXIT_FAILURE;
         }
         std::vector<PluginHandle> plugins;
 
         JS::RootedObject config(ctx);
-        if(!LoadConfig(ctx, "ultra.json", &config))
+        if(!LoadConfig(ctx, "Turbo.json", &config))
             return EXIT_FAILURE;
         
         // Our config is immutable now.
@@ -267,4 +267,4 @@ extern "C" int main(int argc, char *argv[]){
 
 }
 
-} // namespace Ultra
+} // namespace Turbo

@@ -2,7 +2,7 @@
 #include "io.hpp"
 #include <cstdio>
 
-namespace Ultra{
+namespace Turbo{
 
 class CFile : public IO{
     FILE *file_;
@@ -34,4 +34,4 @@ public:
 
 };
 
-} // namespace Ultra
+} // namespace Turbo

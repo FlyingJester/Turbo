@@ -2,8 +2,8 @@
 #include <string>
 #include <jsapi.h>
 
-namespace Ultra{
+namespace Turbo{
 
 bool RunScript(JSContext *ctx, const std::string &directory, const std::string &script_name);
 
-} // namespace Ultra
+} // namespace Turbo

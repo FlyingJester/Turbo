@@ -2,7 +2,7 @@
 #include <fstream>
 #include <sstream>
 
-namespace Ultra{
+namespace Turbo{
 
 bool RunScript(JSContext *ctx, const std::string &directory, const std::string &script_name){
 
@@ -10,7 +10,7 @@ bool RunScript(JSContext *ctx, const std::string &directory, const std::string &
 
     std::ifstream configfile(directory + '/' + script_name);
     if(!configfile){
-        fprintf(stderr, "[UltraSphere]Could not open script %s\n", script_name.c_str());
+        fprintf(stderr, "[Turbo]Could not open script %s\n", script_name.c_str());
         return false;
     }
     buffer << configfile.rdbuf();
@@ -30,18 +30,18 @@ bool RunScript(JSContext *ctx, const std::string &directory, const std::string &
     global.set(JS::CurrentGlobalOrNull(ctx));
 
     if(!JS::Compile(ctx, global, options, buffer.str().c_str(), buffer.str().length(), &script)){
-        fprintf(stderr, "[UltraSphere]Could not compile script %s\n", script_name.c_str());
+        fprintf(stderr, "[Turbo]Could not compile script %s\n", script_name.c_str());
         return false;
     }
     
     JS_MaybeGC(ctx);
     
     if(!JS_ExecuteScript(ctx, global, script, &rval)){
-        fprintf(stderr, "[UltraSphere]Could not execute script %s\n", script_name.c_str());
+        fprintf(stderr, "[Turbo]Could not execute script %s\n", script_name.c_str());
         return false;
     }
     
     return true;
 }
 
-} // namespace Ultra
+} // namespace Turbo

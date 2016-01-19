@@ -1,5 +1,0 @@
-Import("environment")
-
-audio = environment.SharedLibrary("audio", ["audio.cpp"], LIBS=["ultrasphere"])
-
-Return("audio")

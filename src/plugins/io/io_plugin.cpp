@@ -4,7 +4,7 @@
 #include <cstdio>
 #include <cassert>
 
-namespace Ultra{
+namespace Turbo{
 
 void IOPlugin::init(JSContext *ctx){
     
@@ -149,8 +149,8 @@ JSClass IOPlugin::c_file_class = {
     nullptr
 };
 
-extern "C" Plugin *UltraPlugin(){
+extern "C" Plugin *TurboPlugin(){
     return new IOPlugin();
 }
 
-} // namespace Ultra
+} // namespace Turbo
