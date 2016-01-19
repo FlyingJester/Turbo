@@ -1,5 +1,5 @@
 {
-	"plugins":["io"],
+	"plugins":["file"],
 	"title":"Turbo Game Engine",
 	"author":"Flying Jester",
 	"scripts":["hello.js"]

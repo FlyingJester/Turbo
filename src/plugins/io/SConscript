@@ -1,5 +1,0 @@
-Import("environment")
-
-io = environment.SharedLibrary("io", ["io_plugin.cpp", "io.cpp", "c_file.cpp", "std_c_file.cpp"], LIBS=["turbo"])
-
-Return("io")

@@ -1,0 +1,5 @@
+Import("environment")
+
+file = environment.SharedLibrary("file", ["file.cpp"], LIBS=["turbo"])
+
+Return("file")
