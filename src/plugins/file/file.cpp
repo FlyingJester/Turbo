@@ -208,7 +208,7 @@ JSClass FilePlugin::file_class = {
     nullptr,
     FileConstructor, // constructor
     nullptr,
-    nullptr
+    {nullptr}
 };
 
 void FilePlugin::init(JSContext *ctx){
@@ -244,7 +244,7 @@ void FilePlugin::variableValue(int e, JS::MutableHandleValue vp){
     JS::RootedObject prototype(context(), file_prototype), outval(context());
 
     if(i<3){
-        FILE *file;
+        FILE *file = nullptr;
         if(i==0) file = stdin;
         else if(i==1) file = stdout;
         else if(i==2) file = stderr;
