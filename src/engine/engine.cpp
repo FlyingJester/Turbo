@@ -262,9 +262,11 @@ extern "C" int main(int argc, char *argv[]){
         JS_DeepFreezeObject(ctx, config);
         
         RunConfig(ctx, config, plugins);
-
+    
+        return EXIT_SUCCESS;
     }
-
+    else
+        return EXIT_FAILURE;
 }
 
 } // namespace Turbo
