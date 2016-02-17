@@ -14,7 +14,7 @@ class FilePlugin : public Plugin {
     static const std::array<JSPropertySpec, 3> file_properties;
 
 public:
-    static const int readable = 1, writable = 2, readandwrite = readable|writable;
+    static const int readable, writable, readandwrite;
 
     static JSClass file_class;
     JS::Heap<JSObject *> file_prototype;

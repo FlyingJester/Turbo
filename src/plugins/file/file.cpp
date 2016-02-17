@@ -2,6 +2,13 @@
 
 namespace Turbo {
 
+const int FilePlugin::readable = 1,
+    FilePlugin::writable = 2,
+    FilePlugin::readandwrite = FilePlugin::readable|FilePlugin::writable;
+
+static_assert((FilePlugin::readable|FilePlugin::writable) == (FilePlugin::readable^FilePlugin::writable),
+    "Readable and Writable must have exclusive bit patterns.");
+
 // File callbacks.
 static bool FileSeekable(JSContext *ctx, unsigned argc, JS::Value *vp){
     JS::CallArgs args = CallArgsFromVp(argc, vp);
