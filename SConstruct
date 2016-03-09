@@ -2,7 +2,9 @@ import os
 import sys
 
 environment = Environment(ENV = os.environ)
-environment.Append(LIBPATH=[os.path.join(os.getcwd(), "lib")], RPATH=[os.path.join(os.getcwd(), "lib")], CPPPATH=[os.path.join(os.getcwd(), "include")])
+environment.Append(LIBPATH=[os.path.join(os.getcwd(), "lib")],
+    RPATH=[os.path.join(os.getcwd(), "lib")],
+    CPPPATH=[os.path.join(os.getcwd(), "include")])
 
 if os.name=="posix":
     environment.Append(
@@ -15,4 +17,9 @@ if os.name=="posix":
         OURLIBPATH = os.path.join(os.getcwd(), "lib")
     )
 
+yyymonitor = SConscript(dirs=["yyymonitor"], exports=["environment"])
+Install("lib", yyymonitor)
+Install("include", "yyymonitor/monitor.hpp")
 turbo = SConscript(dirs=["src"], exports=["environment"])
+
+Depends(yyymonitor, turbo)

@@ -1,0 +1,5 @@
+Import("environment")
+
+sapphire = environment.SharedLibrary("sapphire", ["sapphire.cpp"], LIBS=["turbo", "yyymonitor"])
+
+Return("sapphire")

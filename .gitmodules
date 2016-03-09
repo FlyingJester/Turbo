@@ -1,0 +1,3 @@
+[submodule "yyymonitor"]
+	path = yyymonitor
+	url = https://github.com/FlyingJester/libyyymonitor
