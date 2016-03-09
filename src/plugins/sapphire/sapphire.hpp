@@ -88,7 +88,7 @@ public:
         group_prototype,
         shape_prototype;
 
-    FilePlugin() : Plugin("file"){}
+    SapphirePlugin() : Plugin("sapphire"){}
 
     void init(JSContext *ctx) override;
 
