@@ -2,7 +2,7 @@
 #include "plugin.hpp"
 #include <array>
 
-namespace Turbo{
+namespace Sapphire{
 
 /**
  * Objects:
@@ -59,7 +59,7 @@ namespace Turbo{
  *
  */
 
-class SapphirePlugin : public Plugin {
+class SapphirePlugin : public Turbo::Plugin {
 
     static const std::array<JSFunctionSpec, 14> window_methods;
     static const std::array<JSPropertySpec, 2> window_properties;

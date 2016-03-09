@@ -1,4 +1,7 @@
 #include "sapphire.hpp"
+#include "window.hpp"
+
+namespace Sapphire {
 
 JSClass SapphirePlugin::window_class = {
     "File",
@@ -10,10 +13,12 @@ JSClass SapphirePlugin::window_class = {
     nullptr,
     nullptr,
     nullptr,
-    WindowFinalizer, // finalizer
+    Window::Finalizer, // finalizer
     nullptr,
     nullptr,
-    WindowConstructor, // constructor
+    Window::Constructor, // constructor
     nullptr,
     {nullptr}
 };
+
+} // namespace Sapphire

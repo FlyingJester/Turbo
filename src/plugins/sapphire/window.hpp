@@ -31,6 +31,9 @@ public:
 
     static Window *Create(int w, int h);
 
+    static bool Constructor(JSContext *cx, unsigned argc, JS::Value *vp);
+    static void Finalizer(JSFreeOp *fop, JSObject *obj);
+
 };
 
 } // namespace Sapphire
