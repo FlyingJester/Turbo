@@ -1,5 +1,9 @@
 Import("environment")
 
-sapphire = environment.SharedLibrary("sapphire", ["sapphire.cpp", "window.cpp"], LIBS=["turbo", "yyymonitor"])
+local_env = environment.Clone()
+local_env.Append(CPPDEFINES=["SAPPHIRE_USE_SDL2=1"], CPPPATH=["/usr/local/include"])
+
+sapphire = local_env.SharedLibrary("sapphire", ["sapphire.cpp", "window.cpp", "sdl2_window.cpp"], 
+    LIBS=["turbo", "yyymonitor"])
 
 Return("sapphire")
