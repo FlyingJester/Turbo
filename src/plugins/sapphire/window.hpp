@@ -5,7 +5,13 @@
 namespace Sapphire {
 
 class Window{
+protected:
+    virtual bool init(uint64_t w, uint64_t h, const char *title) = 0;
 public:
+
+    virtual bool createGLContext(unsigned major, unsigned minor, Window *shared_with = nullptr) = 0;
+    
+    virtual bool makeCurrentGL() const = 0;
 
     virtual void show() = 0;
     virtual void hide() = 0;

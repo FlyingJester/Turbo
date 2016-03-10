@@ -9,9 +9,15 @@ namespace Sapphire {
 
 class SDL2Window : public Window{
     SDL_Window *window;
+    SDL_GLContext context;
+protected:
+    bool init(uint64_t w, uint64_t h, const char *title) override;
 public:
-    SDL2Window();
-    bool create(uint64_t w, uint64_t h, const char *title);
+    SDL2Window(){}
+    virtual ~SDL2Window();
+
+    bool createGLContext(unsigned major, unsigned minor, Window *shared_with = nullptr) override;
+    bool makeCurrentGL() const override;
 
     void show() override;
     void hide() override;
