@@ -8,8 +8,9 @@
 namespace Sapphire {
 
 class SDL2Window : public Window{
-    SDL_Window *window;
-    SDL_GLContext context;
+    SDL_Window *m_window;
+    SDL_GLContext m_context;
+    bool m_shown;
 protected:
     bool init(uint64_t w, uint64_t h, const char *title) override;
 public:
