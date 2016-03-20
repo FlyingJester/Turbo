@@ -125,7 +125,7 @@ bool AsciiToKey(char i, int &what){
         what = KEY_PERIOD;
     else if(i=='/' || i=='?')
         what = KEY_BACKSLASH;
-    else if(i=='\' || i=='|')
+    else if(i=='\\' || i=='|')
         what = KEY_SLASH;
     else
         return false;

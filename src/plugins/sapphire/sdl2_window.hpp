@@ -25,16 +25,16 @@ public:
     bool shown() const override;
 
     void flip() override;
-    void clear() override;
 
     uint64_t h() const override;
     uint64_t w() const override;
 
-    unsigned getKey() override;
+    KeyCode getKey() override;
     bool areKeysLeft() override;
     void clearKeys() override;
+    bool isKeyPressed(KeyCode k) override;
 
-    unsigned getClick() override;
+    MouseButtons getClick() override;
     bool areClicksLeft() override;
     void clearClicks() override;
 
