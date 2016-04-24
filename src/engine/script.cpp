@@ -20,23 +20,20 @@ bool RunScript(JSContext *ctx, const std::string &directory, const std::string &
     options.setFileAndLine(ctx, script_name.c_str(), 0);
     options.setIntroductionScript(nullptr).setVersion(JSVERSION_LATEST).setUTF8(true);
 
-    options.asmJSOption = true;
+    options.asmJSOption = JS::AsmJSOption::Enabled;
     options.strictOption = true;
 
     JS::RootedScript script(ctx);
     JS::RootedValue rval(ctx);
 
-    JS::RootedObject global(ctx);
-    global.set(JS::CurrentGlobalOrNull(ctx));
-
-    if(!JS::Compile(ctx, global, options, buffer.str().c_str(), buffer.str().length(), &script)){
+    if(!JS::Compile(ctx, options, buffer.str().c_str(), buffer.str().length(), &script)){
         fprintf(stderr, "[Turbo]Could not compile script %s\n", script_name.c_str());
         return false;
     }
     
     JS_MaybeGC(ctx);
     
-    if(!JS_ExecuteScript(ctx, global, script, &rval)){
+    if(!JS_ExecuteScript(ctx, script, &rval)){
         fprintf(stderr, "[Turbo]Could not execute script %s\n", script_name.c_str());
         return false;
     }

@@ -54,8 +54,7 @@ public:
     // Small helper for wrapping native objects.
     template<class T>
     static void wrapNativeObject(JSContext *ctx, T *that, const JSClass *clazz, JS::HandleObject prototype, JS::MutableHandle<JSObject*> aobj){
-        JS::RootedObject global(ctx, JS::CurrentGlobalOrNull(ctx));
-        aobj.set(JS_NewObjectWithGivenProto(ctx, clazz, prototype, global));
+        aobj.set(JS_NewObjectWithGivenProto(ctx, clazz, prototype));
         JS_SetPrivate(aobj, that);
     }
 

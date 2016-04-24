@@ -17,12 +17,12 @@ namespace Turbo {
 
     }
 
-    void *LibraryFunction(library_handle *that, const std::string &name){
-        return GetProcAddress((HMODULE)that.handle, name.c_str());
+    void *LibraryFunction(library_handle that, const std::string &name){
+        return GetProcAddress((HMODULE)that, name.c_str());
     }
 
     void CloseLibrary(void *that){
-        FreeLibrary((HMODULE)that.handle);
+        FreeLibrary((HMODULE)that);
     }
 
 #else
