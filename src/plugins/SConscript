@@ -1,12 +1,12 @@
 import os
 import sys
 
-Import("environment")
+Import("environment libturbo")
 
 plugins = []
 
 for f in os.listdir(os.getcwd()):
     if os.path.isdir(f):
-        plugins.append([SConscript(dirs=[f], exports=["environment"])])
+        plugins.append([SConscript(dirs=[f], exports=["environment", "libturbo"])])
 
 Return("plugins")

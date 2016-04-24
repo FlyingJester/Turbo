@@ -3,9 +3,21 @@
 #include <string>
 #include <cassert>
 
+#ifdef _WIN32
+    #define TURBO_LIBRARY_EXPORT __declspec(dllexport)
+    #ifdef TURBO_INTERNAL
+        #define TURBO_EXPORT TURBO_LIBRARY_EXPORT
+    #else
+        #define TURBO_EXPORT __declspec(dllimport)
+    #endif
+#else
+    #define TURBO_LIBRARY_EXPORT
+    #define TURBO_EXPORT
+#endif
+
 namespace Turbo{
 
-class Plugin{
+class TURBO_EXPORT Plugin{
     const char *name_;
 
     // This is the object holding the plugin. It is exposed to script under name()

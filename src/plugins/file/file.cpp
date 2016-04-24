@@ -319,7 +319,7 @@ const std::array<JSPropertySpec, 3> FilePlugin::file_properties = {{
     JS_PS_END
 }};
 
-extern "C" Plugin *TurboPlugin(){
+extern "C" TURBO_LIBRARY_EXPORT Plugin *TurboPlugin(){
     return new FilePlugin();
 }
 

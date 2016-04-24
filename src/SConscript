@@ -5,10 +5,9 @@ Import("environment")
 
 environment.Append(CPPPATH=[os.path.join(os.getcwd(), "include")])
 
-turbo = SConscript(dirs=["engine"],  exports=["environment"])
-plugins     = SConscript(dirs=["plugins"], exports=["environment"])
+libturbo = SConscript(dirs=["engine"], exports=["environment"])
+plugins = SConscript(dirs=["plugins"], exports=["environment", "libturbo"])
 
-environment.Install(environment["ENGINEPATH"], turbo)
 environment.Install(environment["PLUGINPATH"], plugins)
 
-Return("turbo")
+Return("libturbo")
