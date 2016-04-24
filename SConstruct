@@ -11,11 +11,14 @@ if os.name=="posix":
         CCFLAGS = " -Wall -Wextra -Werror -Wno-unused-parameter -Os -g ",
         CXXFLAGS = " -std=c++11 -Wno-invalid-offsetof -fno-rtti -fno-exceptions",
         CFLAGS = " -ansi ",
-        LINKFLAGS = " -g ",
+        LINKFLAGS = " -g "
+    )
+
+environment.Append(
         PLUGINPATH = os.path.join(os.getcwd(), "build/plugins"),
         ENGINEPATH = os.path.join(os.getcwd(), "build"),
         OURLIBPATH = os.path.join(os.getcwd(), "lib")
-    )
+)
 
 yyymonitor = SConscript(dirs=["yyymonitor"], exports=["environment"])
 Install("lib", yyymonitor)
