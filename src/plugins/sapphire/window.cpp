@@ -1,79 +1,60 @@
 #include "window.hpp"
+#include "plugin.hpp"
 #include "sdl2_window.hpp"
-#include <cassert>
 
-namespace Sapphire{
+#ifdef _WIN32
+#include <Windows.h>
+#endif
+#include <GL/gl.h>
 
-Window::~Window(){
+namespace Sapphire {
 
+using Turbo::Plugin;
+
+void Window::glInit(){
+
+    glEnable(GL_TEXTURE_2D);
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_DEPTH_TEST);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glClearColor(0, 0, 0, 0xFF);
 }
 
-int Window::getScrolls(){
-    int n = 0;
+Window::~Window(){}
 
-    do{
-        n += getScroll();
-    }while(areScrollsLeft());
+bool Window::Constructor(JSContext *ctx, unsigned argc, JS::Value *vp){
 
-    return n;
-}
-
-Window *Window::Create(uint64_t w, uint64_t h, const char *title){
-    for(unsigned major = 4; major != 0; major--){
-        for(unsigned minor = 4; minor != 0; minor--){
-            if(Window *const win = Create(major, minor, w, h, title))
-                return win;
-        }
-    }
-    return nullptr;
-}
-
-Window *Window::Create(unsigned gl_major, unsigned gl_minor, uint64_t w, uint64_t h, const char *title){
-    Window *win = nullptr;
+    JS::CallArgs args = CallArgsFromVp(argc, vp);
+    
+    if(args.length()<2)
+        return Plugin::setError(ctx, "Window::Constructor Error: requires two arguments");
+    if(!args[0].isNumber())
+        return Plugin::setError(ctx, "Window::Constructor Error: argument 0 must be a number");
+    if(!args[1].isNumber())
+        return Plugin::setError(ctx, "Window::Constructor Error: argument 1 must be a number");
+    
+    const int w = args[0].toInt32(), h = args[1].toInt32();
+    
+    if(w<=0)
+        return Plugin::setError(ctx, "Window::Constructor Error: Width must be positive");
+    if(h<=0)
+        return Plugin::setError(ctx, "Window::Constructor Error: Height must be positive");
+    
+    const char *title = "Sapphire";
+    //TODO: Window Title
+    
+    Window *win;
+    
 #if SAPPHIRE_USE_SDL2
-    if((win = new SDL2Window())){
-        win->init(w, h, title);
-        if(win->createGLContext(gl_major, gl_minor))
-            return win;
-        else{
-            delete win;
-            win = nullptr;
-        }
-    }
+    win = new SDL2Window(w, h, title); 
 #endif
-#if SAPPHIRE_USE_FLTK
-    if((win = new FLTKWindow())){
-        win->init(w, h, title);
-        if(win->createGLContext(gl_major, gl_minor))
-            return win;
-        else{
-            delete win;
-            win = nullptr;
-        }
-    }
-#endif
-    assert(win == nullptr);
-
-    return nullptr;
 }
 
-Window *Window::CreateNoGL(uint64_t w, uint64_t h, const char *title){
-    Window *win = nullptr;
+void Window::Finalizer(JSFreeOp *fop, JSObject *obj){
 
-    if(false);
-#if SAPPHIRE_USE_SDL2
-    else if((win = new SDL2Window()));
-#endif
-#if SAPPHIRE_USE_FLTK
-    else if((win = new FLTKWindow()));
-#endif
-    else
-        return nullptr;
-
-    if(win)
-        win->init(w, h, title);
-
-    return win;
 }
 
 } // namespace Sapphire

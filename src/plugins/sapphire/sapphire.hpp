@@ -2,91 +2,18 @@
 #include "plugin.hpp"
 #include <array>
 
-namespace Sapphire{
-
-/**
- * Objects:
- *    - Window
- *    - Image
- *    - Group
- *    - Shape
- *    - Shader
- *
- *    - Window
- *        + show()
- *        + hide()
- *        + flip()
- *        + clear()
- *        + w
- *        + h
- *        + shown
- *        + getKey()
- *        + areKeysLeft()
- *        + clearKeys()
- *        + getClicks()
- *        + areClicksLeft()
- *        + clearClicks()
- *        + getScroll()
- *        + getScrolls()
- *        + areScrollsLeft()
- *        + clearScrolls()
- *
- *    - Image(w, h, color) / Image(filename)? / Image(w, h, typedarray)
- *        + w
- *        + h
- *
- *    - Shader()?
- *        + attributes > ["attributeName1", "attributeName2", ...]
- *
- *    - Shape(Vertices, image)
- *        + image
- *        + x
- *        + y
- *        + rotX
- *        + rotY
- *        + angle
- *        + scale
- *
- *    - Group(shapes, shader)
- *        + shader
- *        + x
- *        + y
- *        + rotX
- *        + rotY
- *        + angle
- *        + scale
- *        + draw(Window)
- *
- */
+namespace Sapphire {
 
 class SapphirePlugin : public Turbo::Plugin {
 
-    static const std::array<JSFunctionSpec, 14> window_methods;
-    static const std::array<JSPropertySpec, 2> window_properties;
-
-    static const std::array<JSPropertySpec, 2> image_properties;
-
-    static const std::array<JSPropertySpec, 1> shader_methods;
-
-    static const std::array<JSPropertySpec, 7> shape_properties;
-
-    static const std::array<JSFunctionSpec, 1> group_methods;
-    static const std::array<JSPropertySpec, 7> group_properties;
+    static const std::array<JSFunctionSpec, 3> window_methods;
+    static const std::array<JSPropertySpec, 3> window_properties;
 
 public:
-    static const int readable, writable, readandwrite;
 
-    static JSClass window_class,
-        image_class,
-        shader_class,
-        group_class,
-        shape_class;
+    static JSClass window_class;
 
-    JS::Heap<JSObject *> window_prototype,
-        image_prototype,
-        shader_prototype,
-        group_prototype,
-        shape_prototype;
+    JS::Heap<JSObject *> window_prototype;
 
     SapphirePlugin() : Plugin("sapphire"){}
 
@@ -101,4 +28,4 @@ public:
 
 };
 
-} // namespace Turbo
+} // namespace Sapphire

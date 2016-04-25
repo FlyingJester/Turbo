@@ -2,6 +2,7 @@
 #include "engine.hpp"
 #include "plugloader.hpp"
 #include "script.hpp"
+#include "js/Initialization.h"
 #include <memory>
 #include <vector>
 #include <fstream>
@@ -178,12 +179,14 @@ static bool LoadScriptsFromConfig(JSContext *ctx, JS::HandleValue script_list_va
 // Parse and operate on a SpiderMonkey object representing our configuration.
 static bool RunConfig(JSContext *ctx, JS::RootedObject &config, std::vector<PluginHandle> &plugins){
     JS::RootedValue plugin_list_val(ctx), script_list_val(ctx);
-    if(!(JS_GetProperty(ctx, config, "plugins", &plugin_list_val) && JS_IsArrayObject(ctx, plugin_list_val))){
+    bool is_array;
+    
+    if(!(JS_GetProperty(ctx, config, "plugins", &plugin_list_val) && JS_IsArrayObject(ctx, plugin_list_val, &is_array) && is_array)){
         fprintf(stderr, "[Turbo]Config lacks 'plugins' attribute as an array\n"); 
         return false;
     }
 
-    if(!(JS_GetProperty(ctx, config, "scripts", &script_list_val) && JS_IsArrayObject(ctx, script_list_val))){
+    if(!(JS_GetProperty(ctx, config, "scripts", &script_list_val) && JS_IsArrayObject(ctx, script_list_val, &is_array) && is_array)){
         fprintf(stderr, "[Turbo]Config lacks 'scripts' attribute as an array\n"); 
         return false;
     }
@@ -229,7 +232,7 @@ extern "C" int main(int argc, char *argv[]){
     std::unique_ptr<JSRuntime, void(*)(JSRuntime *)> runtime_ptr(JS_NewRuntime(8L * 1024L * 1024L), JS_DestroyRuntime);
     JSRuntime *const runtime = runtime_ptr.get();
     
-    JS::RuntimeOptionsRef(runtime).setIon(true).setBaseline(true).setAsmJS(true).setUnboxedObjects(true).setExtraWarnings(true);
+    JS::RuntimeOptionsRef(runtime).setIon(true).setBaseline(true).setAsmJS(true).setExtraWarnings(true);
     
     std::unique_ptr<JSContext, void(*)(JSContext *)> context_ptr(JS_NewContext(runtime, 8192), JS_DestroyContext);
     if(JSContext *const ctx = context_ptr.get()){ // Scope for autorequest

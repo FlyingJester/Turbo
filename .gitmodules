@@ -1,3 +1,6 @@
 [submodule "yyymonitor"]
 	path = yyymonitor
 	url = https://github.com/FlyingJester/libyyymonitor
+[submodule "src/plugins/sapphire/SapphireSG"]
+	path = src/plugins/sapphire/SapphireSG
+	url = https://github.com/FlyingJester/SapphireSG

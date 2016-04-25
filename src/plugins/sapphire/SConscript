@@ -1,9 +1,21 @@
+import os
 Import("environment")
+
+libsapphiresg = SConscript(dirs=["SapphireSG"], exports=["environment"])
 
 local_env = environment.Clone()
 local_env.Append(CPPDEFINES=["SAPPHIRE_USE_SDL2=1"], CPPPATH=["/usr/local/include"])
 
+if os.name == "nt":
+    gl_lib = "OpenGL32"
+else:
+    gl_lib = "gl"
+
 sapphire = local_env.SharedLibrary("sapphire", ["sapphire.cpp", "window.cpp", "sdl2_window.cpp", "keys.cpp", "sdl2_keys.cpp"], 
-    LIBS=["turbo", "yyymonitor"])
+    LIBS=["turbo", "yyymonitor", "sapphiresg", "mozjs-", "SDL2", gl_lib])
+
+install_libsapphiresg = environment.Install(environment["OURLIBPATH"], libsapphiresg)
+
+Depends(sapphire, install_libsapphiresg)
 
 Return("sapphire")

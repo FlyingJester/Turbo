@@ -5,7 +5,7 @@
 
 namespace Turbo {
 
-class PluginHandle{
+class TURBO_EXPORT PluginHandle{
     void *handle_;
     Plugin *plugin_;
 public:
@@ -37,6 +37,7 @@ public:
 };
 
 // On return, the plugin will still need to be initialized.
+TURBO_EXPORT
 PluginHandle LoadPlugin(const std::string &directory, const std::string &plugin_name);
 
 } // namespace Turbo
