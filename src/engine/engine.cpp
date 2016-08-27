@@ -223,7 +223,12 @@ static void ReportError(JSContext *ctx, const char *msg, JSErrorReport *report) 
 
 class TurboAutoJS{
 public:
-    TurboAutoJS(){ JS_Init(); }
+    TurboAutoJS(){
+        if(!JS_Init()){
+            fputs("Error initializing SpiderMonkey.", stderr);
+            exit(EXIT_FAILURE);
+        }
+    }
     ~TurboAutoJS(){ JS_ShutDown(); }
 };
 
@@ -233,7 +238,7 @@ extern "C" int main(int argc, char *argv[]){
     std::unique_ptr<JSRuntime, void(*)(JSRuntime *)> runtime_ptr(JS_NewRuntime(8L * 1024L * 1024L), JS_DestroyRuntime);
     JSRuntime *const runtime = runtime_ptr.get();
     
-    JS::RuntimeOptionsRef(runtime).setIon(true).setBaseline(true).setAsmJS(true).setExtraWarnings(true);
+    //JS::RuntimeOptionsRef(runtime).setIon(true).setBaseline(true).setAsmJS(true).setExtraWarnings(true);
     
     std::unique_ptr<JSContext, void(*)(JSContext *)> context_ptr(JS_NewContext(runtime, 8192), JS_DestroyContext);
     if(JSContext *const ctx = context_ptr.get()){ // Scope for autorequest

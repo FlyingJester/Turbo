@@ -71,12 +71,12 @@ typedef Plugin *(*LoadPluginFunctionType)();
 PluginHandle LoadPlugin(const std::string &directory, const std::string &plugin_name){
     
     if(library_handle handle = LoadLibrary(directory, plugin_name)){
-        PluginHandle plugin(handle);
+        PluginHandle plugin(handle, plugin_name);
         LoadPluginFunctionType loader;
 
         if(!(loader = (LoadPluginFunctionType)LibraryFunction(handle, "TurboPlugin"))){
             fprintf(stderr, "[Turbo]No entry point for plugin %s\n", plugin_name.c_str());
-            return PluginHandle(nullptr);
+            return PluginHandle(nullptr, plugin_name);
         }
 
         if(Plugin *p = loader()){
@@ -85,12 +85,12 @@ PluginHandle LoadPlugin(const std::string &directory, const std::string &plugin_
         }
         else{
             fprintf(stderr, "[Turbo]Null plugin %s\n", plugin_name.c_str());
-            return PluginHandle(nullptr);
+            return PluginHandle(nullptr, plugin_name);
         }
     }
     else{
         fprintf(stderr, "[Turbo]Could not open shared library for plugin %s\n", plugin_name.c_str());
-        return PluginHandle(nullptr);
+        return PluginHandle(nullptr, plugin_name);
     }
 }
 

@@ -1,9 +1,14 @@
-
+import os
 
 Import("environment")
 
-libturbo = environment.SharedLibrary("turbo", ["plugin.cpp", "script.cpp", "plugloader.cpp"], CPPDEFINES=["TURBO_INTERNAL=1"], LIBS=["mozjs-"])
-turbo = environment.Program("turbo", ["engine.cpp"], LIBS=["mozjs-", "libturbo"])
+turbo_environment = environment.Clone()
+
+if os.name == "posix":
+    turbo_environment.Append(LINKFLAGS = "-Wl,--whole-archive -lmozglue -Wl,--no-whole-archive")
+
+libturbo = turbo_environment.SharedLibrary("turbo", ["plugin.cpp", "script.cpp", "plugloader.cpp"], CPPDEFINES=["TURBO_INTERNAL=1"], LIBS=["mozjs-", "mozglue"])
+turbo = turbo_environment.Program("turbo", ["engine.cpp"], LIBS=["mozjs-", "mozglue", "libturbo"])
 
 install_libturbo = environment.Install(environment["OURLIBPATH"], libturbo)
 
